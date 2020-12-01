@@ -1,8 +1,22 @@
 #!/usr/bin/env sh
 
+default_redirect()
+{
+cat > /etc/nginx/conf.d/default_redirect.conf << EOF
+server {
+  listen 80 default_server;
+  listen 443 ssl default_server;
+
+  ssl_certificate     /etc/.certs/server.crt;
+  ssl_certificate_key  /etc/.certs/server.key;
+  return 404;
+}
+EOF
+}
+
 create_config_file()
 {
-cat > /etc/nginx/conf.d/default.conf << EOF
+cat > /etc/nginx/conf.d/$1.conf << EOF
 server {
   listen       80;
   listen       443 ssl;
@@ -12,9 +26,6 @@ server {
 
   server_name     *.$2;
 
-  ssl_certificate     /etc/.certs/server.crt;
-  ssl_certificate_key  /etc/.certs/server.key;
-
   location / {
     proxy_set_header Host \$host;
     proxy_pass $3;
@@ -23,17 +34,16 @@ server {
 EOF
 }
 
-DOMAIN_SERVICES=$(echo "${DOMAIN_SERVICES}" | sed 's@,@ @g')
+default_redirect
 
+DOMAIN_SERVICES=$(echo "${DOMAIN_SERVICES}" | sed 's@,@ @g')
 for DOMAIN_SERVICE in ${DOMAIN_SERVICES} ; do
     DOMAIN=$(echo ${DOMAIN_SERVICE} | sed 's@:@ @' | cut -d ' ' -f 1)
     SERVICE_URL=$(echo ${DOMAIN_SERVICE} | sed 's@:@ @' | cut -d ' ' -f 2)
     SERVICE_NAME=$(echo ${SERVICE_URL} | sed 's@.*//@@')
-    create_config_file "${SERVICE_NAME}" "${DOMAIN}" "${SERVICE_URL}"
-    cat /etc/nginx/conf.d/${SERVICE_NAME}.conf
+    create_config_file "${SERVICE_NAME}-${RANDOM}" "${DOMAIN}" "${SERVICE_URL}"
 done
-
-#rm -rf /etc/nginx/conf.d/default.conf
+cat /etc/nginx/conf.d/*.conf
 
 apk add nano
 nginx -g 'daemon off;'

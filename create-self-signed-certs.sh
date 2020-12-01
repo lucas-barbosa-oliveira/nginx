@@ -38,7 +38,7 @@ C  = UE
 ST = Bruxelas
 L  = OCARIoT
 O  = OCARIoT
-CN = ocariot.com
+CN = ocariot.test
 # Allow client and server auth. You may want to only allow server auth.
 # Link to SAN names.
 [v3_req]
@@ -52,7 +52,7 @@ subjectAltName       = @alt_names
 [alt_names]
 IP.1  = 127.0.0.1
 DNS.1 = localhost
-DNS.1 = *.ocariot.test
+DNS.2 = *.ocariot.test
 EOF
 
 # Create the certificate authority (CA). This will be a self-signed CA, and this

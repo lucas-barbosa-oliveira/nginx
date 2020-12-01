@@ -4,11 +4,10 @@ services:
   nginx:
     container_name: nginx
     image: nginx:1.17.10-alpine
-#    entrypoint: "init.sh"
+    entrypoint: "init.sh"
     environment:
       - DOMAIN_SERVICES=${DOMAIN_SERVICES}
     volumes:
-#      - ./config/default.conf:/etc/nginx/conf.d/default.conf
       - ./config/init.sh:/usr/local/bin/init.sh
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.crt
@@ -21,7 +20,7 @@ services:
 networks:
   net-nginx:
     name: net-nginx
-    driver: overlay
+    driver: bridge
     driver_opts:
       encrypted: "true"
 #  net-nginx:
@@ -30,6 +29,6 @@ networks:
 #    driver: overlay
 #    driver_opts:
 #      encrypted: "true"
-
+# docker network connect [network name] [container name]
 
 
