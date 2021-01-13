@@ -12,8 +12,8 @@ services:
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.crt
     ports:
-      - 80:80
-      - 443:443
+      - ${NG_PORT_HTTP:-80}:80
+      - ${NG_PORT_HTTPS:-443}:443
     networks:
       - net-nginx
 
@@ -29,6 +29,6 @@ networks:
 #    driver: overlay
 #    driver_opts:
 #      encrypted: "true"
-# docker network connect [network name] [container name]
+# docker network connect net-nginx [container name]
 
 

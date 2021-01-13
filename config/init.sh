@@ -24,7 +24,7 @@ server {
   access_log /var/log/nginx/nginx-access.log;
   error_log /var/log/nginx/nginx-access.error debug;
 
-  server_name     *.$2;
+  server_name     *.$2 $2;
 
   location / {
     proxy_set_header Host \$host;
