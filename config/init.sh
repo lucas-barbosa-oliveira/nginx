@@ -46,4 +46,5 @@ done
 cat /etc/nginx/conf.d/*.conf
 
 apk add nano
+sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
 nginx -g 'daemon off;'
