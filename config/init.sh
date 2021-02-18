@@ -27,6 +27,9 @@ server {
   server_name     *.$2 $2;
 
   location / {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection \$connection_upgrade;
     proxy_set_header Host \$host;
     proxy_pass $3;
   }
@@ -47,4 +50,6 @@ cat /etc/nginx/conf.d/*.conf
 
 apk add nano
 sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
+sed -ie "/http {/a\\    client_max_body_size 2000M;" /etc/nginx/nginx.conf
+sed -ie "/http {/a\\    map \$http_upgrade \$connection_upgrade { default upgrade; '' close; }" /etc/nginx/nginx.conf
 nginx -g 'daemon off;'
