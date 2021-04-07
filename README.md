@@ -40,7 +40,7 @@ If you already have valid HTTPS certificates to use on the platform, you need to
 
 | Variable | Description | Example |
 | -------- | ----------- | ------- |
-| `DOMAIN_SERVICES` | O nome dos serviços que estão associados a um domínio específico | `ocariot.test:https://api-gateway,ocariot.ml:https://api-gateway2` |
+| `DOMAIN_SERVICES` | Path to the location that contains the mapping of domains for services. | `./config/domain_to_service_map.txt` |
 
 ## Building and Deploying the containers
 
