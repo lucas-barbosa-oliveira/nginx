@@ -4,11 +4,12 @@ services:
   nginx:
     container_name: nginx
     image: nginx:1.17.10-alpine
-    entrypoint: "init.sh"
+    command: "init.sh"
     environment:
-      - DOMAIN_SERVICES=${DOMAIN_SERVICES}
+      - DOMAIN_TO_SERVICE_MAP=/etc/domain_to_service_map.txt
     volumes:
       - ./config/init.sh:/usr/local/bin/init.sh
+      - ${DOMAIN_TO_SERVICE_MAP}:/etc/domain_to_service_map.txt
       - ${SSL_KEY_PATH}:/etc/.certs/server.key
       - ${SSL_CERT_PATH}:/etc/.certs/server.crt
     ports:

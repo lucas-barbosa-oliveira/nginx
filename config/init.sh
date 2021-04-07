@@ -39,7 +39,7 @@ EOF
 
 default_redirect
 
-DOMAIN_SERVICES=$(echo "${DOMAIN_SERVICES}" | sed 's@,@ @g')
+DOMAIN_SERVICES=$(cat ${DOMAIN_TO_SERVICE_MAP} | sed -e 's/\n\|#.*//g' -e '/^$/d')
 for DOMAIN_SERVICE in ${DOMAIN_SERVICES} ; do
     DOMAIN=$(echo ${DOMAIN_SERVICE} | sed 's@:@ @' | cut -d ' ' -f 1)
     SERVICE_URL=$(echo ${DOMAIN_SERVICE} | sed 's@:@ @' | cut -d ' ' -f 2)
