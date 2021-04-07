@@ -1,0 +1,2 @@
+# Examples of map
+localhost:https://api-gateway
