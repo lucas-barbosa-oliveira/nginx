@@ -46,6 +46,7 @@ server {
 EOF
 }
 
+rm -rf /etc/nginx/conf.d/*
 default_redirect
 http_to_https
 
@@ -59,7 +60,7 @@ done
 cat /etc/nginx/conf.d/*.conf
 
 apk add nano
-sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
-sed -ie "/http {/a\\    client_max_body_size 2000M;" /etc/nginx/nginx.conf
-sed -ie "/http {/a\\    map \$http_upgrade \$connection_upgrade { default upgrade; '' close; }" /etc/nginx/nginx.conf
+[ ! "$(grep server_names_hash_bucket_size)" ] && sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
+[ ! "$(grep client_max_body_size)" ] && sed -ie "/http {/a\\    client_max_body_size 2000M;" /etc/nginx/nginx.conf
+[ ! "$(grep connection_upgrade)" ] && sed -ie "/http {/a\\    map \$http_upgrade \$connection_upgrade { default upgrade; '' close; }" /etc/nginx/nginx.conf
 nginx -g 'daemon off;'
