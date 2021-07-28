@@ -4,7 +4,6 @@ default_redirect()
 {
 cat > /etc/nginx/conf.d/default_redirect.conf << EOF
 server {
-  listen 80 default_server;
   listen 443 ssl default_server;
 
   ssl_certificate     /etc/.certs/server.crt;
@@ -14,11 +13,21 @@ server {
 EOF
 }
 
+http_to_https()
+{
+cat > /etc/nginx/conf.d/http_to_https.conf << EOF
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://\$host\$request_uri;
+}
+EOF
+}
+
 create_config_file()
 {
 cat > /etc/nginx/conf.d/$1.conf << EOF
 server {
-  listen       80;
   listen       443 ssl;
 
   access_log /var/log/nginx/nginx-access.log;
@@ -37,7 +46,9 @@ server {
 EOF
 }
 
+rm -rf /etc/nginx/conf.d/*
 default_redirect
+http_to_https
 
 DOMAIN_SERVICES=$(cat ${DOMAIN_TO_SERVICE_MAP} | sed -e 's/\n\|#.*//g' -e '/^$/d')
 for DOMAIN_SERVICE in ${DOMAIN_SERVICES} ; do
@@ -49,7 +60,7 @@ done
 cat /etc/nginx/conf.d/*.conf
 
 apk add nano
-sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
-sed -ie "/http {/a\\    client_max_body_size 2000M;" /etc/nginx/nginx.conf
-sed -ie "/http {/a\\    map \$http_upgrade \$connection_upgrade { default upgrade; '' close; }" /etc/nginx/nginx.conf
+[ ! "$(grep server_names_hash_bucket_size)" ] && sed -ie "/http {/a\\    server_names_hash_bucket_size  64;" /etc/nginx/nginx.conf
+[ ! "$(grep client_max_body_size)" ] && sed -ie "/http {/a\\    client_max_body_size 2000M;" /etc/nginx/nginx.conf
+[ ! "$(grep connection_upgrade)" ] && sed -ie "/http {/a\\    map \$http_upgrade \$connection_upgrade { default upgrade; '' close; }" /etc/nginx/nginx.conf
 nginx -g 'daemon off;'

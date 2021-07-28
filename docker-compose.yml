@@ -4,6 +4,7 @@ services:
   nginx:
     container_name: nginx
     image: nginx:1.17.10-alpine
+    restart: always
     command: "init.sh"
     environment:
       - DOMAIN_TO_SERVICE_MAP=/etc/domain_to_service_map.txt
