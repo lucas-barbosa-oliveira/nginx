@@ -4,7 +4,6 @@ default_redirect()
 {
 cat > /etc/nginx/conf.d/default_redirect.conf << EOF
 server {
-  listen 80 default_server;
   listen 443 ssl default_server;
 
   ssl_certificate     /etc/.certs/server.crt;
@@ -14,11 +13,21 @@ server {
 EOF
 }
 
+http_to_https()
+{
+cat > /etc/nginx/conf.d/http_to_https.conf << EOF
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://\$host\$request_uri;
+}
+EOF
+}
+
 create_config_file()
 {
 cat > /etc/nginx/conf.d/$1.conf << EOF
 server {
-  listen       80;
   listen       443 ssl;
 
   access_log /var/log/nginx/nginx-access.log;
@@ -38,6 +47,7 @@ EOF
 }
 
 default_redirect
+http_to_https
 
 DOMAIN_SERVICES=$(cat ${DOMAIN_TO_SERVICE_MAP} | sed -e 's/\n\|#.*//g' -e '/^$/d')
 for DOMAIN_SERVICE in ${DOMAIN_SERVICES} ; do
